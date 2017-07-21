@@ -21,35 +21,13 @@ TODO: iovec?
 ]]
 
 
-local ffi = require 'ffi'
+local ffi = require 'ffi.reloadable'
 local lib = ffi.load(package.searchpath('libluabin', package.cpath), true)
 local C = ffi.C
 local M = {}
 
-local function typedef(t,def)
-	if not pcall(ffi.typeof,t) then
-		local r,e = pcall(ffi.cdef,def)
-		if not r then error(e,2) end
-	end
-	return ffi.typeof(t)
-end
-
-local function fundef(n,def,src)
-	src = src or ffi.C
-	local f = function(src,n) return src[n] end
-	if not pcall(f,src,n) then
-		local r,e = pcall(ffi.cdef,def)
-		if not r then error(e,2) end
-	end
-	local r,e = pcall(f,src,n)
-	if not r then
-		error(e,2)
-	end
-	return r
-end
-
 --- hexdump
-typedef('xd_conf',[[
+ffi.typedef('xd_conf',[[
 	typedef struct {
 		uint8_t row;
 		uint8_t hpad;
@@ -59,10 +37,10 @@ typedef('xd_conf',[[
 		uint8_t cols;
 	} xd_conf;
 ]]);
-fundef('bin_xd',[[
+ffi.fundef('bin_xd',[[
 	char * bin_xd(const char *data, size_t size, xd_conf *cf);
 ]])
-fundef('free',[[
+ffi.fundef('free',[[
 	void free (void *);
 ]])
 function M.xd( data, len )
@@ -80,25 +58,25 @@ end
 --- hexdump
 
 -- endian
-fundef('bin_htobe16',[[uint16_t bin_htobe16 (uint16_t x);]]) function M.htobe16(x) return lib.bin_htobe16(x) end
-fundef('bin_htole16',[[uint16_t bin_htole16 (uint16_t x);]]) function M.htole16(x) return lib.bin_htole16(x) end
-fundef('bin_be16toh',[[uint16_t bin_be16toh (uint16_t x);]]) function M.be16toh(x) return lib.bin_be16toh(x) end
-fundef('bin_le16toh',[[uint16_t bin_le16toh (uint16_t x);]]) function M.le16toh(x) return lib.bin_le16toh(x) end
-fundef('bin_htobe32',[[uint32_t bin_htobe32 (uint32_t x);]]) function M.htobe32(x) return lib.bin_htobe32(x) end
-fundef('bin_htole32',[[uint32_t bin_htole32 (uint32_t x);]]) function M.htole32(x) return lib.bin_htole32(x) end
-fundef('bin_be32toh',[[uint32_t bin_be32toh (uint32_t x);]]) function M.be32toh(x) return lib.bin_be32toh(x) end
-fundef('bin_le32toh',[[uint32_t bin_le32toh (uint32_t x);]]) function M.le32toh(x) return lib.bin_le32toh(x) end
-fundef('bin_htobe64',[[uint64_t bin_htobe64 (uint64_t x);]]) function M.htobe64(x) return lib.bin_htobe64(x) end
-fundef('bin_htole64',[[uint64_t bin_htole64 (uint64_t x);]]) function M.htole64(x) return lib.bin_htole64(x) end
-fundef('bin_be64toh',[[uint64_t bin_be64toh (uint64_t x);]]) function M.be64toh(x) return lib.bin_be64toh(x) end
-fundef('bin_le64toh',[[uint64_t bin_le64toh (uint64_t x);]]) function M.le64toh(x) return lib.bin_le64toh(x) end
+ffi.fundef('bin_htobe16',[[uint16_t bin_htobe16 (uint16_t x);]]) function M.htobe16(x) return lib.bin_htobe16(x) end
+ffi.fundef('bin_htole16',[[uint16_t bin_htole16 (uint16_t x);]]) function M.htole16(x) return lib.bin_htole16(x) end
+ffi.fundef('bin_be16toh',[[uint16_t bin_be16toh (uint16_t x);]]) function M.be16toh(x) return lib.bin_be16toh(x) end
+ffi.fundef('bin_le16toh',[[uint16_t bin_le16toh (uint16_t x);]]) function M.le16toh(x) return lib.bin_le16toh(x) end
+ffi.fundef('bin_htobe32',[[uint32_t bin_htobe32 (uint32_t x);]]) function M.htobe32(x) return lib.bin_htobe32(x) end
+ffi.fundef('bin_htole32',[[uint32_t bin_htole32 (uint32_t x);]]) function M.htole32(x) return lib.bin_htole32(x) end
+ffi.fundef('bin_be32toh',[[uint32_t bin_be32toh (uint32_t x);]]) function M.be32toh(x) return lib.bin_be32toh(x) end
+ffi.fundef('bin_le32toh',[[uint32_t bin_le32toh (uint32_t x);]]) function M.le32toh(x) return lib.bin_le32toh(x) end
+ffi.fundef('bin_htobe64',[[uint64_t bin_htobe64 (uint64_t x);]]) function M.htobe64(x) return lib.bin_htobe64(x) end
+ffi.fundef('bin_htole64',[[uint64_t bin_htole64 (uint64_t x);]]) function M.htole64(x) return lib.bin_htole64(x) end
+ffi.fundef('bin_be64toh',[[uint64_t bin_be64toh (uint64_t x);]]) function M.be64toh(x) return lib.bin_be64toh(x) end
+ffi.fundef('bin_le64toh',[[uint64_t bin_le64toh (uint64_t x);]]) function M.le64toh(x) return lib.bin_le64toh(x) end
 --endian
 
 --hex
-fundef('bin_hex',[[
+ffi.fundef('bin_hex',[[
 	char * bin_hex(char *p, size_t size);
 ]])
-fundef('free',[[
+ffi.fundef('free',[[
 	void free (void *);
 ]])
 function M.hex( data, len )
@@ -117,21 +95,20 @@ end
 
 local buf = {}
 
-fundef('calloc',  [[ void *calloc(size_t count, size_t size); ]])
-fundef('malloc',  [[ void * malloc(size_t size); ]])
-fundef('realloc', [[ void * realloc(void *ptr, size_t size); ]])
-fundef('free',    [[ void free(void *ptr); ]])
-
-fundef('memmove', [[ void * memmove(void *dst, const void *src, size_t len); ]])
+ffi.fundef('calloc',  [[ void *calloc(size_t count, size_t size); ]])
+ffi.fundef('malloc',  [[ void * malloc(size_t size); ]])
+ffi.fundef('realloc', [[ void * realloc(void *ptr, size_t size); ]])
+ffi.fundef('free',    [[ void free(void *ptr); ]])
+ffi.fundef('memmove', [[ void * memmove(void *dst, const void *src, size_t len); ]])
 
 do -- base_buf
-	local double_union = typedef('double_union',[[
+	local double_union = ffi.typedef('double_union',[[
 		typedef union double_union {
 			double   d;
 			uint64_t u;
 		} double_union;
 	]]);
-	local float_union = typedef('float_union',[[
+	local float_union = ffi.typedef('float_union',[[
 		typedef union float_union {
 			float   d;
 			uint32_t u;
@@ -308,7 +285,7 @@ do -- base_buf
 			)
 		end
 
-		local rbuf_t = ffi.metatype(typedef('bin_rbuf',[[
+		local rbuf_t = ffi.typedef('bin_rbuf',[[
 			typedef struct bin_rbuf {
 				char * buf;
 				union {
@@ -325,7 +302,7 @@ do -- base_buf
 
 				size_t len;
 			} bin_rbuf;
-		]]),{
+		]],{
 			__index = rbuf;
 			__tostring = bin_rbuf_str;
 		})
@@ -473,13 +450,13 @@ do -- fixbuf
 	for i = 12,20 do
 		local sz = 2^i
 		local cap = sz - ffi.sizeof('size_t')
-		local t = typedef('bin_buf_'..cap,
+		local t = ffi.typedef('bin_buf_'..cap,
 			'typedef struct bin_buf_'..cap..' { char buf['..cap..']; size_t cur; } bin_buf_'..cap..';'
+			,{
+				__index = buf;
+				__tostring = bin_buf_str;
+			}
 		)
-		ffi.metatype(t, {
-			__index = buf;
-			__tostring = bin_buf_str;
-		});
 		types[cap] = t
 		table.insert(sizes,cap)
 	end
@@ -546,21 +523,20 @@ do -- buf
 		end
 	end
 
-	local t = typedef('bin_buf',[[
+	for k,v in pairs(base_buf) do buf[k] = v end
+
+	local t = ffi.typedef('bin_buf',[[
 		typedef struct bin_buf {
 			char  *buf;
 			size_t cur;
 			size_t len;
 		} bin_buf;
-	]])
-
-	for k,v in pairs(base_buf) do buf[k] = v end
-
-	ffi.metatype(t, {
+	]], {
 		__gc = bin_buf_free;
 		__index = buf;
 		__tostring = bin_buf_str;
-	});
+
+	})
 
 	function M.buf(sz)
 		sz = sz or 4096;
