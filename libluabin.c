@@ -35,11 +35,41 @@ char * bin_hex(unsigned char *p, size_t size) {
 		fprintf(stderr,"Can't allocate memory\n");
 		return NULL;
 	}
-	unsigned char *	e = p + size;
+	unsigned char * e = p + size;
 	for (; p<e; p++) {
 		snprintf(rv, 3, "%02X", *p);
 		rv+=2;
 	}
 	*rv = 0;
 	return r;
+}
+
+uint8_t reb_decode(const char *p, size_t size, uint64_t * result) {
+	uint8_t i;
+	for (i = 0; i < 10; i++) {
+		if (size <= i) {
+			// Fail case: you cannot unpack 0 bytes
+			return 0;
+		}
+		*result += ((uint64_t) p[i] & 0x7f) << (i * 7);
+		if (!(p[i] & 0x80)) {
+			return i + 1;
+		}
+	}
+	return i;
+}
+
+uint8_t reb_encode(uint64_t n, char *buf, size_t size) {
+	if (n <= 0x7f) {
+		*buf = (char) n;
+	} else {
+		char *ptr = buf, *pend = buf + size;
+		for (; n && ptr <= pend; n >>= 7, ptr++) {
+			*ptr = (n & 0x7f) | ( n > 0x7f ? 0x80 : 0 );
+		}
+		if (ptr > pend) {
+			return 1; // fail
+		}
+	}
+	return 0;
 }
