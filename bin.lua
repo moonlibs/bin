@@ -43,12 +43,6 @@ ffi.fundef('bin_xd',[[
 ffi.fundef('free',[[
 	void free (void *);
 ]])
-ffi.fundef('reb_decode',[[
-	uint8_t reb_decode(unsigned char *p, uint64_t * result);
-]])
-ffi.fundef('reb_encode',[[
-	void reb_encode(uint64_t n, char *buf);
-]])
 function M.xd( data, len )
 	len = len or #data
 	local buf = lib.bin_xd(ffi.cast("char*",data),len,nil);
@@ -106,8 +100,6 @@ ffi.fundef('malloc',  [[ void * malloc(size_t size); ]])
 ffi.fundef('realloc', [[ void * realloc(void *ptr, size_t size); ]])
 ffi.fundef('free',    [[ void free(void *ptr); ]])
 ffi.fundef('memmove', [[ void * memmove(void *dst, const void *src, size_t len); ]])
-
-local jit_major = jit.version:match("LuaJIT (%d%.%d)")
 
 do -- base_buf
 	local double_union = ffi.typedef('double_union',[[
@@ -197,76 +189,55 @@ do -- base_buf
 		local uint8_t  = ffi.typeof('uint8_t *')
 		return function(self,n)
 	]]
-
-	if jit_major >= "2.1" then
-		for i = 1,9 do
-			local lim = bit.lshift(1ULL,7*i)
-			if i == 1 then
-				func = func .. "if n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
-			elseif i == 9 then
-				func = func .. "else --- < "..string.format("0x%xULL",tonumber(lim)).."\n"
-			else
-				func = func .. "elseif n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
-			end
-			func = func .. "\tlocal p = ffi.cast(uint8_t,self:alloc("..i.."))\n"
-			if i > 1 then
-				for ptr = 0,i-2 do
-					func = func .. "\tp["..ptr.."] = bit.bor(0x80, bit.rshift(n,"..( 7*(i-ptr-1) ).."))\n"
-				end
-			end
-			func = func .. "\tp["..(i-1).."] = bit.band(0x7f, n)\n"
+	for i = 1,9 do
+		local lim = bit.lshift(1ULL,7*i)
+		if i == 1 then
+			func = func .. "if n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
+		elseif i == 9 then
+			func = func .. "else --- < "..string.format("0x%xULL",tonumber(lim)).."\n"
+		else
+			func = func .. "elseif n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
 		end
-		func = func .. "end\nend\n"
+		func = func .. "\tlocal p = ffi.cast(uint8_t,self:alloc("..i.."))\n"
+		if i > 1 then
+			for ptr = 0,i-2 do
+				func = func .. "\tp["..ptr.."] = bit.bor(0x80, bit.rshift(n,"..( 7*(i-ptr-1) ).."))\n"
+			end
+		end
+		func = func .. "\tp["..(i-1).."] = bit.band(0x7f, n)\n"
+	end
+	func = func .. "end\nend\n"
 
-		buf.ber = dostring( func )
+	buf.ber = dostring( func )
 
-		local func = [[
+	local func = [[
 		local ffi = require 'ffi'
 		local uint8_t  = ffi.typeof('uint8_t *')
 		return function(self,n)
 	]]
-		for i = 1,9 do
-			local lim = bit.lshift(1ULL,7*i)
-			if i == 1 then
-				func = func .. "if n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
-			elseif i == 9 then
-				func = func .. "else --- < "..string.format("0x%xULL",tonumber(lim)).."\n"
-			else
-				func = func .. "elseif n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
-			end
-			func = func .. "\tlocal p = ffi.cast(uint8_t,self:alloc("..i.."))\n"
-			func = func .. "\tp[0] = bit.bor(0x80, n)\n"
-			if i > 1 then
-				for ptr = 1,i-2 do
-					func = func .. "\tp["..ptr.."] = bit.bor(0x80, bit.rshift(n,"..( 7*(ptr) ).."))\n"
-				end
-			end
-			func = func .. "\tp["..(i-1).."] = bit.band(0x7f, bit.rshift(n,"..( 7*(i-1) ).."))\n"
+	for i = 1,9 do
+		local lim = bit.lshift(1ULL,7*i)
+		if i == 1 then
+			func = func .. "if n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
+		elseif i == 9 then
+			func = func .. "else --- < "..string.format("0x%xULL",tonumber(lim)).."\n"
+		else
+			func = func .. "elseif n < "..string.format("0x%xULL",tonumber(lim)).." then\n"
 		end
-		func = func .. "end\nend\n"
-
-		-- print(func)
-		buf.reb = dostring (func)
-	else
-		-- compatitbility with lower version of LuaJIT
-		local lims = {
-			-- 7     15         21
-			0x80ULL, 0x4000ULL, 0x200000ULL,
-			-- 28          35              42
-			0x10000000ULL, 0x800000000ULL, 0x40000000000ULL,
-			-- 49               54                    63
-			0x2000000000000ULL, 0x100000000000000ULL, 0x800000000000000ULL
-		}
-		function buf.reb (self, n)
-			local size = 1
-			while size < #lims and n >= lims[size] do
-				size = size + 1
+		func = func .. "\tlocal p = ffi.cast(uint8_t,self:alloc("..i.."))\n"
+		func = func .. "\tp[0] = bit.bor(0x80, n)\n"
+		if i > 1 then
+			for ptr = 1,i-2 do
+				func = func .. "\tp["..ptr.."] = bit.bor(0x80, bit.rshift(n,"..( 7*(ptr) ).."))\n"
 			end
-
-			local p = ffi.cast(uint8_t, self:alloc(size))
-			C.reb_encode(n, p)
 		end
+		func = func .. "\tp["..(i-1).."] = bit.band(0x7f, bit.rshift(n,"..( 7*(i-1) ).."))\n"
 	end
+	func = func .. "end\nend\n"
+
+	-- print(func)
+
+	buf.reb = dostring( func )
 
 	function buf:char(x)
 		local p = self:alloc(1)
@@ -373,42 +344,29 @@ do -- base_buf
 		rbuf.V = rbuf.i32le;
 		rbuf.N = rbuf.i32be;
 
-		if jit_major < "2.1" then
-			function rbuf:reb()
-				local n = ffi.new("uint64_t [1]", 0)
-				local shift = C.reb_decode(self.p.u8, ffi.cast('uint64_t *', n))
-				if shift > 9 then
-					error("Decoding REB failed", 2)
-				else
-					self.p.u8 = self.p.u8 + shift
-					return n[0]
+		function rbuf:reb()
+			local n = 0ULL
+			for i = 0,8 do
+				n = bit.bor( n, bit.lshift( bit.band( 0x7f, ffi.cast( 'uint64_t', self.p.u8[i] ) ), i*7) )
+				if self.p.u8[i] < 0x80 then
+					self.p.u8 = self.p.u8 + i + 1
+					return n
 				end
 			end
-		else
-			function rbuf:reb()
-				local n = 0ULL
-				for i = 0,8 do
-					n = bit.bor( n, bit.lshift( bit.band( 0x7f, ffi.cast( 'uint64_t', self.p.u8[i] ) ), i*7) )
-					if self.p.u8[i] < 0x80 then
-						self.p.u8 = self.p.u8 + i + 1
-						return n
-					end
-				end
-				error("Bad reverse BER sequence",2)
-			end
+			error("Bad reverse BER sequence",2)
+		end
 
-			function rbuf:ber()
-				local n = 0ULL
-				for i = 0,8 do
-					n = bit.bor( bit.lshift(n,7), bit.band( 0x7f, self.p.u8[i] ) )
-					if self.p.u8[i] < 0x80 then
-						self.p.u8 = self.p.u8 + i + 1
-						return n
-					end
+		function rbuf:ber()
+			local n = 0ULL
+			for i = 0,8 do
+				n = bit.bor( bit.lshift(n,7), bit.band( 0x7f, self.p.u8[i] ) )
+				if self.p.u8[i] < 0x80 then
+					self.p.u8 = self.p.u8 + i + 1
+					return n
 				end
-				error("Bad BER sequence",2)
 			end
-		end -- if jit_major
+			error("Bad BER sequence",2)
+		end
 
 		function rbuf:str(len)
 			local str = ffi.string( self.p.c, len )
@@ -588,7 +546,7 @@ do -- buf
 		-- b.buf = ffi.new('char[?]',b.len) -- memory corruption after free ((
 		b.buf = C.malloc(b.len) -- memory corruption after free ((
 		return b
-	end
+	end	
 end
 
 return M
