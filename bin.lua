@@ -398,9 +398,9 @@ do -- base_buf
 
 		function M.rbuf(p,l)
 			if not l then l = #p end
-			local rbuf = rbuf_t{ buf = p; len = l; }
-			rbuf.p.c = p;
-			return rbuf;
+			local self = rbuf_t{ buf = p; len = l; }
+			self.p.c = p;
+			return self;
 		end
 
 		function buf:reader()
@@ -419,29 +419,41 @@ do -- fixbuf
 	local buf = {}
 
 	function buf:alloc( sz )
-		-- print("alloc for buf ",self, sz)
-		if ffi.sizeof(self) - self.cur < sz then
+		-- print("alloc for buf ",self, sz, ffi.sizeof(self[0]))
+		if ffi.sizeof(self[0]) - self.cur < sz then
 			error("No more space in fixed buffer",2)
 		end
 		self.cur = self.cur + sz
 		return ffi.cast('char *',self) + self.cur - sz
 	end
 
+	--[[
+		* pv() doesn't grant ownership. you can't continue to use pointer
+			after buffer modification or after free of original object
+		* export() grants ownership of struct to the returned value (including gc).
+			use object after export if prohibited
+	]]
 
 	function buf:pv()
 		return ffi.cast('char *',self),self.cur
 	end
-
+	
 	function buf:export()
-		-- since it is fixed buffer, is is the same object
-		return ffi.cast('char *',self), self.cur, ffi.sizeof(self) - ffi.sizeof(self.cur)
+		--[[
+			local newptr = ffi.cast('char *',ffi.gc(self,nil))
+			local sz = ffi.sizeof(self[0]) - ffi.sizeof(self.cur)
+			return ffi.gc(newptr, C.free), self.cur, sz
+		]]
+		return ffi.gc(ffi.cast('char *',ffi.gc(self,nil)),C.free),
+			self.cur,
+			ffi.sizeof(self[0]) - ffi.sizeof(self.cur)
 	end
 
 	local function bin_buf_str( self )
 		return string.format(
 			'binbuf<0x%x>[%s/%s]',
 			tonumber(ffi.cast('int',ffi.cast('char *',self))),
-			tonumber(self.cur),tonumber(ffi.sizeof(self) - ffi.sizeof(self.cur)))
+			tonumber(self.cur),tonumber(ffi.sizeof(self[0]) - ffi.sizeof(self.cur)))
 	end
 
 	for k,v in pairs(base_buf) do buf[k] = v end
@@ -468,7 +480,14 @@ do -- fixbuf
 		for _,cap in ipairs(sizes) do
 			if cap >= sz then
 				-- print("choose ",cap, " for ",sz)
-				local b = ffi.new( 'bin_buf_'..cap );
+				local typename = 'bin_buf_'..cap
+				-- local b = ffi.new( 'bin_buf_'..cap );
+				local b =
+					ffi.gc(
+						ffi.cast( typename..'*', C.calloc( 1, ffi.sizeof(typename) ) ),
+						C.free
+					)
+					b.cur = 0;
 				return b
 			end
 		end
@@ -478,7 +497,6 @@ do -- fixbuf
 end
 
 do -- buf
-	local pv
 	local buf = {}
 
 	local function capacity(sz)
@@ -546,7 +564,7 @@ do -- buf
 		local b = ffi.new( 'bin_buf');
 		b.len = capacity(sz);
 		-- b.buf = ffi.new('char[?]',b.len) -- memory corruption after free ((
-		b.buf = C.malloc(b.len) -- memory corruption after free ((
+		b.buf = C.calloc(b.len,1) -- memory corruption after free ((
 		return b
 	end
 end
