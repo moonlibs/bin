@@ -21,10 +21,10 @@ TODO: iovec?
 ]]
 
 
+local M = { V = 3 }
 local ffi = require 'ffi.reloadable'
-local lib = ffi.load(package.searchpath('libluabin', package.cpath), true)
+local lib = ffi.load(package.searchpath('libluabin-scm-'..M.V, package.cpath), true)
 local C = ffi.C
-local M = {}
 
 --- hexdump
 ffi.typedef('xd_conf',[[

@@ -23,7 +23,7 @@ build = {
     type = 'builtin',
     modules = {
         ['bin'] = 'bin.lua';
-        ['libluabin'] = {
+        ['libluabin-'..version] = {
             sources = {
                 "libluabin.c",
             };
