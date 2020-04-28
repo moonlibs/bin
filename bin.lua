@@ -109,6 +109,14 @@ ffi.fundef('memmove', [[ void * memmove(void *dst, const void *src, size_t len);
 
 local jit_major = jit.version:match("LuaJIT (%d%.%d)")
 
+if not rawget(_G, 'dostring') then
+	if not rawget(_G, 'loadstring') then
+		rawset(_G, 'loadstring', load)
+	end
+	local loadstring = rawget(_G, 'loadstring')
+	rawset(_G, 'dostring', function(str) return assert(loadstring(str))() end)
+end
+
 do -- base_buf
 	local double_union = ffi.typedef('double_union',[[
 		typedef union double_union {
