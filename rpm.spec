@@ -9,8 +9,8 @@
 %define __repo bin
 
 Name:			lua-%{__repo}
-Version:		2.0
-Release:		0
+Version:		3.1.0
+Release:		1
 License:		BSD
 Group:			Development/Libraries
 Url:			https://github.com/moonlibs/bin
@@ -41,13 +41,13 @@ mkdir %{__repo}
 %install
 cd %{__repo}
 gcc -O2 -fPIC -I/usr/include/lua5.1 -c libluabin.c -o libluabin.o
-gcc -shared -o libluabin.so -L/usr/lib libluabin.o
+gcc -shared -o libluabin-scm-3.so -L/usr/lib libluabin.o
 
 install -d -m 0755 %{buildroot}/usr/share/lua/5.1/
-install -d -m 0755 %{buildroot}/usr/lib64/tarantool/
+install -d -m 0755 %{buildroot}/usr/lib64/lua/5.1/
 
 install -m 0644 bin.lua   %{buildroot}/usr/share/lua/5.1/
-install -m 0644 libluabin.so  %{buildroot}/usr/lib64/tarantool/
+install -m 0644 libluabin-scm-3.so  %{buildroot}/usr/lib64/lua/5.1/
 
 %clean
 rm -rf %{buildroot}
@@ -56,7 +56,7 @@ rm -rf %{__repo}
 %files
 %defattr(-,root,root)
 %{_datadir}/lua/%{lua_version}/*
-%{_prefix}/lib64/tarantool/
+%{_prefix}/lib64/lua/5.1/
 
 %changelog
 
