@@ -201,16 +201,13 @@ do -- base_buf
 
 	-- compatitbility with lower version of LuaJIT
 	local lims = {
-		-- 7     15         21
-		0x80ULL, 0x4000ULL, 0x200000ULL,
-		-- 28          35              42
-		0x10000000ULL, 0x800000000ULL, 0x40000000000ULL,
-		-- 49               54                    63
-		0x2000000000000ULL, 0x100000000000000ULL, 0x800000000000000ULL
+		2ULL^7 , 2ULL^14, 2ULL^21,
+		2ULL^28, 2ULL^35, 2ULL^42,
+		2ULL^49, 2ULL^56, 2ULL^63,
 	}
 	function buf.reb (self, n)
 		local size = 1
-		while size < #lims and n >= lims[size] do
+		while size <= #lims and n >= lims[size] do
 			size = size + 1
 		end
 
@@ -354,8 +351,8 @@ do -- base_buf
 
 		function rbuf:reb()
 			local n = ffi.new("uint64_t [1]", 0)
-			local shift = C.reb_decode(self.p.u8, self.len, ffi.cast('uint64_t *', n))
-			if shift > 9 or shift == 0 then
+			local shift = C.reb_decode(self.p.u8, self:avail(), ffi.cast('uint64_t *', n))
+			if shift == 0 then
 				error("Decoding REB failed", 2)
 			else
 				self.p.u8 = self.p.u8 + shift

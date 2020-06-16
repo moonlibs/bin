@@ -45,18 +45,26 @@ char * bin_hex(unsigned char *p, size_t size) {
 }
 
 uint8_t reb_decode(const char *p, size_t size, uint64_t * result) {
-	uint8_t i;
-	for (i = 0; i < 10; i++) {
-		if (size <= i) {
+	uint8_t byte;
+	for (byte = 0; byte < 10; byte++) {
+		if (size <= byte) {
 			// Fail case: you cannot unpack 0 bytes
 			return 0;
 		}
-		*result += ((uint64_t) p[i] & 0x7f) << (i * 7);
-		if (!(p[i] & 0x80)) {
-			return i + 1;
+		*result += ((uint64_t) p[byte] & 0x7f) << (byte * 7);
+		if (byte < 9) {
+			// if most significant bit is 0
+			if (!(p[byte] & 0x80)) {
+				// return amount of consumed bytes
+				return byte+1;
+			}
+		} else if (p[byte] != 0x01) {
+			// 10-th byte of REB number must always equals 0x01
+			return 0;
 		}
 	}
-	return i;
+	// At this poing byte always equal 10
+	return byte;
 }
 
 uint8_t reb_encode(uint64_t n, char *buf, size_t size) {
@@ -69,6 +77,9 @@ uint8_t reb_encode(uint64_t n, char *buf, size_t size) {
 		}
 		if (ptr > pend) {
 			return 1; // fail
+		}
+		if (n > 0) {
+			return 1; // fail, number wasn't packed
 		}
 	}
 	return 0;
