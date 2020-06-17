@@ -9,7 +9,7 @@
 %define __repo bin
 
 Name:			lua-%{__repo}
-Version:		3.1.0
+Version:		3.1.1
 Release:		1
 License:		BSD
 Group:			Development/Libraries
