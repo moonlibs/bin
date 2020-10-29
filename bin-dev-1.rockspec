@@ -28,6 +28,7 @@ build = {
         ["bin.buf"] = "bin/buf.lua",
         ["bin.fixbuf"] = "bin/fixbuf.lua",
         ["bin.rbuf"] = "bin/rbuf.lua",
+        ["bin.saferbuf"] = "bin/saferbuf.lua",
         ['libluabin-scm-3'] = {
             sources = "libluabin.c"
         },

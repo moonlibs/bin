@@ -1,20 +1,20 @@
-local rbuf = {}
+local srbuf = {}
 local ffi = require 'ffi.reloadable'
 local C = ffi.C
 
 local base = require 'bin.base'
 
-local function bin_rbuf_str( self )
+local function bin_safe_rbuf_str(self)
 	return string.format(
-		'binrbuf<0x%x>[%s/%s]',
+		'binsrbuf<0x%x>[%s/%s]',
 		tonumber(ffi.cast('int',ffi.cast('char *',self))),
 		tonumber(self.p.c - self.buf),
 		tonumber(self.len)
 	)
 end
 
-local rbuf_t = ffi.typedef('bin_rbuf',[[
-	typedef struct bin_rbuf {
+local saferbuf_t = ffi.typedef('bin_safe_rbuf',[[
+	typedef struct bin_safe_rbuf {
 		const char * buf;
 		union {
 			const char     *c;
@@ -29,18 +29,24 @@ local rbuf_t = ffi.typedef('bin_rbuf',[[
 		} p;
 
 		size_t len;
-	} bin_rbuf;
+	} bin_safe_rbuf;
 ]],{
-	__index = rbuf;
-	__tostring = bin_rbuf_str;
+	__index = srbuf;
+	__tostring = bin_safe_rbuf_str;
 })
 
 for _,ix in pairs({'i','u'}) do
-	for _,t in pairs({'8', '16', '32', '64'}) do
+	for _,t in pairs({
+		'8',
+		'16',
+		'32',
+		'64',
+	}) do
 		local sz = math.floor(tonumber(t)/8)
 		local typename = ix..t
 
-		rbuf[ typename ] = function(self)
+		srbuf[ typename ] = function(self)
+			self:have(sz, 3)
 			local n = self.p[typename][0]
 			self.p[typename] = self.p[typename]+1
 			return n
@@ -48,12 +54,14 @@ for _,ix in pairs({'i','u'}) do
 		if sz > 1 then
 			local htobe = 'bin_htobe' .. t
 			local htole = 'bin_htole' .. t
-			rbuf[ typename..'le' ] = function(self)
+			srbuf[ typename..'le' ] = function(self)
+				self:have(sz, 3)
 				local n = self.p[typename][0]
 				self.p[typename] = self.p[typename]+1
 				return C[htole]( n )
 			end
-			rbuf[ typename..'be' ] = function(self)
+			srbuf[ typename..'be' ] = function(self)
+				self:have(sz, 3)
 				local n = self.p[typename][0]
 				self.p[typename] = self.p[typename]+1
 				return C[htobe]( n )
@@ -64,26 +72,28 @@ end
 
 -- TODO: float, double
 
-rbuf.V = rbuf.i32le;
-rbuf.N = rbuf.i32be;
+srbuf.V = srbuf.i32le;
+srbuf.N = srbuf.i32be;
 
-function rbuf:reb()
+function srbuf:reb()
 	local n = ffi.new("uint64_t [1]", 0)
 	local shift = C.reb_decode(self.p.u8, self:avail(), ffi.cast('uint64_t *', n))
 	if shift == 0 then
 		error("Decoding REB failed", 2)
 	else
+		self:have(shift, 3)
 		self.p.u8 = self.p.u8 + shift
 		return n[0]
 	end
 end
 
 -- BER isn't supported for lower version of LuaJIT
-if require 'jit'.version_num >= 20100 then
-	function rbuf:ber()
+if base.jit_major >= "2.1" then
+	function srbuf:ber()
 		local n = 0ULL
 		for i = 0,8 do
 			n = bit.bor( bit.lshift(n,7), bit.band( 0x7f, self.p.u8[i] ) )
+			self:have(i+1, 3)
 			if self.p.u8[i] < 0x80 then
 				self.p.u8 = self.p.u8 + i + 1
 				return n
@@ -93,36 +103,47 @@ if require 'jit'.version_num >= 20100 then
 	end
 end
 
-function rbuf:str(len)
-	local str = ffi.string( self.p.c, len )
+function srbuf:str(len)
+	self:have(len, 3)
+	local str = ffi.string(self.p.c, len)
 	self.p.c = self.p.c + len
 	return str
 end
-function rbuf:dump()
+function srbuf:dump()
 	return base.xd(self.p.c,self.len - (self.p.c-self.buf),nil)
 end
 
-function rbuf:hex()
+function srbuf:hex()
 	return base.hex(self.p.c,self.len - (self.p.c-self.buf))
 end
 
-function rbuf:move()
+function srbuf:move()
 	C.memmove( self.buf, self.p.c, self.len - (self.p.c-self.buf) )
 	self.p.c = self.buf
 end
 
-function rbuf:skip(len)
+function srbuf:skip(len)
+	self:have(len, 3)
 	self.p.c = self.p.c + len
 end
 
-function rbuf:avail()
+function srbuf:have(bytes, lvl)
+	if not bytes then return self:avail() end
+	if bytes > self:avail() then
+		lvl = lvl or 2
+		error("not enough bytes", lvl)
+	end
+	return true
+end
+
+function srbuf:avail()
 	return self.len - (self.p.c-self.buf)
 end
 
 local M = {}
 function M.new(p, l)
 	if not l then l = #p end
-	local self = rbuf_t{ buf = p; len = l; }
+	local self = saferbuf_t{ buf = p; len = l; }
 	self.p.c = p
 	return self
 end

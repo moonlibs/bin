@@ -12,10 +12,8 @@ end
 
 local buf = {}
 function buf:alloc( sz )
-	-- print("alloc for buf ",self, sz)
 	if self.len - self.cur < sz then
 		self.len = capacity(self.cur + sz);
-		-- print("realloc for buf ",self, sz)
 		self.buf = C.realloc(self.buf,self.len)
 	end
 	if self.buf == nil then

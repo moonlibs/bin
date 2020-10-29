@@ -1,7 +1,7 @@
 local buf = {}
 
 local base = require 'bin.base'
-local rbuf_t = require 'bin.rbuf'
+local rbuf = require 'bin.rbuf'
 
 local ffi = require 'ffi.reloadable'
 local C = ffi.C
@@ -20,12 +20,7 @@ ffi.typedef('float_union',[[
 ]]);
 
 for _,ix in pairs({'','u'}) do
-	for _,ti in pairs({
-		'8',
-		'16',
-		'32',
-		'64',
-	}) do
+	for _,ti in pairs({'8', '16', '32', '64'}) do
 		local t = ti
 		local sz = math.floor(tonumber(ti)/8)
 		local t_t = ffi.typeof(ix..'int'..t..'_t *')
@@ -105,7 +100,7 @@ function buf.reb (self, n)
 	end
 end
 
-if base.jit_major >= "2.1" then
+if require 'jit'.version_num >= 20100 then
 	local func = [[
 		local ffi = require 'ffi'
 		local uint8_t  = ffi.typeof('uint8_t *')
@@ -168,9 +163,7 @@ end
 
 function buf:reader()
 	local p,l = self:pv()
-	return rbuf_t(p,l)
+	return rbuf.new(p, l)
 end
-
-require 'bin.base'.basebuf = buf
 
 return buf
