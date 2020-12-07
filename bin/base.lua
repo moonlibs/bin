@@ -1,4 +1,4 @@
-local M = { V = 3 }
+local M = { V = 4 }
 
 local ffi = require 'ffi.reloadable'
 local lib = ffi.load(package.searchpath('libluabin-scm-'..M.V, package.cpath), true)
