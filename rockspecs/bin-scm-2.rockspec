@@ -1,9 +1,9 @@
 package = 'bin'
-version = 'scm-1'
+version = 'scm-2'
 
 source  = {
     url    = 'git://github.com/moonlibs/bin.git';
-    branch = 'v1';
+    branch = 'v2';
 }
 
 description = {
