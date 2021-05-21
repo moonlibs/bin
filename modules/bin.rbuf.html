@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Bin</title>
+    <link rel="stylesheet" href="../ldoc_pale.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bin</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Class_rbuf">Class rbuf </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/bin.base.html">bin.base</a></li>
+  <li><a href="../modules/bin.buf.html">bin.buf</a></li>
+  <li><a href="../modules/bin.fixbuf.html">bin.fixbuf</a></li>
+  <li><strong>bin.rbuf</strong></li>
+  <li><a href="../modules/bin.saferbuf.html">bin.saferbuf</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/bin.basebuf.html">bin.basebuf</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>bin.rbuf</code></h1>
+<p>Implements unsafe binary Reader.</p>
+<p> Same as <a href="../classes/bin.basebuf.html#">bin.basebuf</a> supports decoding numbers
+ into any endianess.</p>
+
+<p> <code>{u,i}{8,16,32,64}{be,le,}</code> are supported opposite to defined at <a href="../classes/bin.basebuf.html#">bin.basebuf</a>.</p>
+
+
+<h2><a href="#Class_rbuf">Class rbuf </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#rbuf:ber">rbuf:ber()</a></td>
+	<td class="summary">Decodes VLQ number Opposite to <a href="../classes/bin.basebuf.html#buf:ber">bin.basebuf.ber</a> (LuaJIT >= 2.1).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:str">rbuf:str(len)</a></td>
+	<td class="summary">[unsafe] Extracts <code>len</code> bytes from buffer as <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:dump">rbuf:dump()</a></td>
+	<td class="summary">[safe] Returns nice hexdump of the remaining buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:hex">rbuf:hex()</a></td>
+	<td class="summary">[safe] Returns hex representation of the remaining buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:move">rbuf:move()</a></td>
+	<td class="summary">[safe] memmoves remaining buffer to the beginning.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:skip">rbuf:skip(len)</a></td>
+	<td class="summary">[unsafe] Forwards cursor for <code>len</code> bytes (accepts negatives).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf:avail">rbuf:avail()</a></td>
+	<td class="summary">[safe] Returns remaining part of the buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#rbuf.new">rbuf.new(p[, l=#p])</a></td>
+	<td class="summary">Creates rbuf from pointer</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Class_rbuf"></a>Class rbuf </h2>
+
+          <div class="section-description">
+
+<p>Implements unsafe binary Reader.
+ Has following structure.</p>
+
+<pre><code>struct bin_rbuf {
+    const char * buf;
+    union {
+        const char     *c;
+        const int8_t   *i8;
+        const uint8_t  *u8;
+        const int16_t  *i16;
+        const uint16_t *u16;
+        const int32_t  *i32;
+        const uint32_t *u32;
+        const int64_t  *i64;
+        const uint64_t *u64;
+    } p;
+    size_t len;
+};
+</code></pre>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "rbuf:ber"></a>
+    <strong>rbuf:ber()</strong>
+    </dt>
+    <dd>
+    Decodes VLQ number Opposite to <a href="../classes/bin.basebuf.html#buf:ber">bin.basebuf.ber</a> (LuaJIT >= 2.1).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>number</code> decoded value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:str"></a>
+    <strong>rbuf:str(len)</strong>
+    </dt>
+    <dd>
+    [unsafe] Extracts <code>len</code> bytes from buffer as <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">len</span>
+            <span class="types"><span class="type">number</span></span>
+         size of resulting string
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a> str
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:dump"></a>
+    <strong>rbuf:dump()</strong>
+    </dt>
+    <dd>
+    [safe] Returns nice hexdump of the remaining buffer
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a> hexdump
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/bin.base.html#xd">bin.base.xd</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:hex"></a>
+    <strong>rbuf:hex()</strong>
+    </dt>
+    <dd>
+    [safe] Returns hex representation of the remaining buffer
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a> hex
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/bin.base.html#hex">bin.base.hex</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:move"></a>
+    <strong>rbuf:move()</strong>
+    </dt>
+    <dd>
+    [safe] memmoves remaining buffer to the beginning.
+ shrinks <code>len</code> of the buffer.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:skip"></a>
+    <strong>rbuf:skip(len)</strong>
+    </dt>
+    <dd>
+    [unsafe] Forwards cursor for <code>len</code> bytes (accepts negatives).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">len</span>
+            <span class="types"><span class="type">number</span></span>
+        `
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rbuf:avail"></a>
+    <strong>rbuf:avail()</strong>
+    </dt>
+    <dd>
+    [safe] Returns remaining part of the buffer
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>left</code> bytes
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rbuf.new"></a>
+    <strong>rbuf.new(p[, l=#p])</strong>
+    </dt>
+    <dd>
+    Creates rbuf from pointer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">p</span>
+            <span class="types"><span class="type">char*</span></span>
+         pointer or string
+        </li>
+        <li><span class="parameter">l</span>
+         length of the pointer
+         (<em>default</em> #p)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/bin.rbuf.html">rbuf</a>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-21 21:50:53 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

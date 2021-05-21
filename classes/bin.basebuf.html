@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Bin</title>
+    <link rel="stylesheet" href="../ldoc_pale.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bin</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Control_methods">Control methods </a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><strong>bin.basebuf</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/bin.base.html">bin.base</a></li>
+  <li><a href="../modules/bin.buf.html">bin.buf</a></li>
+  <li><a href="../modules/bin.fixbuf.html">bin.fixbuf</a></li>
+  <li><a href="../modules/bin.rbuf.html">bin.rbuf</a></li>
+  <li><a href="../modules/bin.saferbuf.html">bin.saferbuf</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>bin.basebuf</code></h1>
+<p>This module implements common write buffer operations.</p>
+<p> basebuf supports <code>{u,}int{8,16,32,64}{be,le,}</code> methods.</p>
+
+<p> All of them accepts single argument n and pushes it with corresponding casting</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#buf:double">buf:double(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as double (8 bytes) into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:doublele">buf:doublele(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as double (8 bytes) casting to LE into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:doublebe">buf:doublebe(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as double (8 bytes) casting to BE into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:float">buf:float(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as float (4 bytes) into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:floatle">buf:floatle(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as float (4 bytes) casting to LE into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:floatbe">buf:floatbe(n)</a></td>
+	<td class="summary">Pushes <code>n</code> as float (4 bytes) casting to BE into buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:ber">buf:ber(n)</a></td>
+	<td class="summary">Pushes number performing variable length encoding</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:char">buf:char(x)</a></td>
+	<td class="summary">Pushes first byte of the string</td>
+	</tr>
+</table>
+<h2><a href="#Control_methods">Control methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#buf:copy">buf:copy(src[, len=#src])</a></td>
+	<td class="summary">Copies data from given string or pointer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:clear">buf:clear([n=0])</a></td>
+	<td class="summary">Rollbacks cursor to given position</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:dump">buf:dump()</a></td>
+	<td class="summary">Returns hexdump of the buffer</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:hex">buf:hex()</a></td>
+	<td class="summary">Returns hex representation (analog of string.tohex)</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#buf:reader">buf:reader()</a></td>
+	<td class="summary">Creates new unsafe <a href="../modules/bin.rbuf.html#">bin.rbuf</a> from the buffer</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "buf:double"></a>
+    <strong>buf:double(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as double (8 bytes) into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:doublele"></a>
+    <strong>buf:doublele(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as double (8 bytes) casting to LE into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:doublebe"></a>
+    <strong>buf:doublebe(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as double (8 bytes) casting to BE into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:float"></a>
+    <strong>buf:float(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as float (4 bytes) into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:floatle"></a>
+    <strong>buf:floatle(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as float (4 bytes) casting to LE into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:floatbe"></a>
+    <strong>buf:floatbe(n)</strong>
+    </dt>
+    <dd>
+    Pushes <code>n</code> as float (4 bytes) casting to BE into buffer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:ber"></a>
+    <strong>buf:ber(n)</strong>
+    </dt>
+    <dd>
+    Pushes number performing variable length encoding   <a href="https://en.wikipedia.org/wiki/Variable-length_quantity#General_structure">wikipedia</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:char"></a>
+    <strong>buf:char(x)</strong>
+    </dt>
+    <dd>
+    Pushes first byte of the string
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Control_methods"></a>Control methods </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "buf:copy"></a>
+    <strong>buf:copy(src[, len=#src])</strong>
+    </dt>
+    <dd>
+    Copies data from given string or pointer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">src</span>
+         string or pointer
+        </li>
+        <li><span class="parameter">len</span>
+         bytes of src to copy
+         (<em>default</em> #src)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:clear"></a>
+    <strong>buf:clear([n=0])</strong>
+    </dt>
+    <dd>
+    Rollbacks cursor to given position
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+         (<em>default</em> 0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "buf:dump"></a>
+    <strong>buf:dump()</strong>
+    </dt>
+    <dd>
+    Returns hexdump of the buffer
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        hexdump
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/bin.base.html#xd">bin.base.xd</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "buf:hex"></a>
+    <strong>buf:hex()</strong>
+    </dt>
+    <dd>
+    Returns hex representation (analog of string.tohex)
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        hex
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/bin.base.html#hex">bin.base.hex</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "buf:reader"></a>
+    <strong>buf:reader()</strong>
+    </dt>
+    <dd>
+    Creates new unsafe <a href="../modules/bin.rbuf.html#">bin.rbuf</a> from the buffer
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        rbuf
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-21 21:50:53 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

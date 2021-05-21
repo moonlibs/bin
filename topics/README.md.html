@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Bin</title>
+    <link rel="stylesheet" href="../ldoc_pale.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bin</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Topics</h2>
+<ul class="">
+  <li><strong>README</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/bin.base.html">bin.base</a></li>
+  <li><a href="../modules/bin.buf.html">bin.buf</a></li>
+  <li><a href="../modules/bin.fixbuf.html">bin.fixbuf</a></li>
+  <li><a href="../modules/bin.rbuf.html">bin.rbuf</a></li>
+  <li><a href="../modules/bin.saferbuf.html">bin.saferbuf</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/bin.basebuf.html">bin.basebuf</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+<h1>SYNOPSIS</h1>
+
+
+<pre>
+
+<span class="keyword">local</span> bin = <span class="global">require</span> <span class="string">'bin'</span>
+<span class="keyword">local</span> ffi = <span class="global">require</span> <span class="string">'ffi'</span>
+
+<span class="comment">--[[ For the first: nice hexdump ]]</span><span class="comment">--
+</span>
+<span class="comment">-- print hexdump of lua string
+</span><span class="global">print</span>(bin.xd(<span class="string">"some binary string"</span>))
+
+<span class="comment">--[[ Gives the following output:
+[0000]   73 6F 6D 65  20 62 69 6E  61 72 79 20  73 74 72 69   some  bin ary  stri
+[0010]   6E 67                                                ng
+]]</span>
+
+<span class="comment">-- Accepts arbitrary pointer and could take length
+</span><span class="global">print</span>(bin.xd(ffi.cast(<span class="string">"void *"</span>,<span class="string">"string"</span>),<span class="number">4</span>))
+<span class="comment">--[[ Gives the following output:
+[0000]   73 74 72 69                                          stri
+]]</span>
+
+<span class="comment">-- For compact output there is <code>hex</code>
+</span><span class="global">print</span>(bin.hex(<span class="string">"some binary string"</span>))
+<span class="comment">-- 736F6D652062696E61727920737472696E67
+</span>
+<span class="comment">--[[ There is also endian conversion functions ]]</span><span class="comment">--
+</span>
+<span class="global">print</span>(bin.htobe16(<span class="number">0x1234</span>)) <span class="comment">-- 13330
+</span><span class="global">print</span>(bin.htole16(<span class="number">0x1234</span>)) <span class="comment">-- 4660
+</span><span class="global">print</span>(bin.be16toh(<span class="number">0x1234</span>)) <span class="comment">-- 13330
+</span><span class="global">print</span>(bin.le16toh(<span class="number">0x1234</span>)) <span class="comment">-- 4660
+</span><span class="global">print</span>(bin.htobe32(<span class="number">0x1234</span>)) <span class="comment">-- 873594880
+</span><span class="global">print</span>(bin.htole32(<span class="number">0x1234</span>)) <span class="comment">-- 4660
+</span><span class="global">print</span>(bin.be32toh(<span class="number">0x1234</span>)) <span class="comment">-- 873594880
+</span><span class="global">print</span>(bin.le32toh(<span class="number">0x1234</span>)) <span class="comment">-- 4660
+</span><span class="global">print</span>(bin.htobe64(<span class="number">0x1234</span>)) <span class="comment">-- 3752061439553044480ULL
+</span><span class="global">print</span>(bin.htole64(<span class="number">0x1234</span>)) <span class="comment">-- 4660ULL
+</span><span class="global">print</span>(bin.be64toh(<span class="number">0x1234</span>)) <span class="comment">-- 3752061439553044480ULL
+</span><span class="global">print</span>(bin.le64toh(<span class="number">0x1234</span>)) <span class="comment">-- 4660ULL
+</span>
+<span class="comment">--[[ And buffer objects. Write buffer ]]</span><span class="comment">--
+</span>
+<span class="keyword">local</span> desired_size = <span class="number">4096</span>
+<span class="keyword">local</span> buf = bin.buf(desired_size)
+<span class="global">print</span>(buf)
+<span class="comment">-- binbuf&lt;0x31004200&gt;[0/4096]
+</span><span class="comment">--         address  used/total
+</span>
+<span class="comment">-- accepts encoding of integers:
+</span>
+buf:uint8(<span class="number">0xff</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- FF
+</span>buf:uint32(<span class="number">0x12345678</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- FF78563412
+</span>buf:uint32(<span class="number">0x12345678</span>)
+
+<span class="comment">-- Also support endianness
+</span>
+buf:uint32be(<span class="number">0x12345678</span>) <span class="comment">-- be for big endian
+</span><span class="global">print</span>(buf:hex()) <span class="comment">-- FF785634127856341212345678
+</span>
+buf:uint32le(<span class="number">0x12345678</span>) <span class="comment">-- le for little endian
+</span><span class="global">print</span>(buf:hex()) <span class="comment">-- FF78563412785634121234567878563412
+</span>
+<span class="comment">--[[
+Complete list of numeric methods:
+uint8     int8     uint8be     int8le
+uint16    int16    uint16be    int16le
+uint32    int32    uint32be    int32le
+uint64    int64    uint64be    int64le
+V = int32le
+N = int32be
+ber - for BER packed integer (perl pack w)
+reb - for reverse BER (big endian)
+f   float    floatbe   floatle
+d   double   doublebe  doublele &lt;- this one looks so weird ;)
+]]</span>
+
+<span class="comment">-- buffer may be cleared (reset pos to zero or other pos within buf)
+</span>buf:clear(<span class="number">8</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- FF78563412785634
+</span><span class="global">print</span>(buf) <span class="comment">-- binbuf&lt;0x31004200&gt;[8/4096]
+</span>buf:clear()
+<span class="global">print</span>(buf) <span class="comment">-- binbuf&lt;0x31004200&gt;[0/4096]
+</span>
+buf:double(<span class="number">0.123456</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- FF78563412785634
+</span>buf:doublebe(<span class="number">0.123456</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- BFB67EFACF9ABF3F3FBF9ACFFA7EB6BF
+</span>
+buf:clear()
+
+buf:float(<span class="number">0.123456</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- 80D6FC3D
+</span>buf:floatbe(<span class="number">0.123456</span>)
+<span class="global">print</span>(buf:hex()) <span class="comment">-- 80D6FC3D3DFCD680
+</span>
+buf:clear()
+
+<span class="comment">--[[ Also there is simple :char ]]</span>
+buf:char(<span class="string">'x'</span>) <span class="comment">-- !only one char
+</span>buf:char(<span class="number">0xfe</span>) <span class="comment">-- but also accepts number as byte
+</span>
+<span class="global">print</span>(buf:hex()) <span class="comment">-- 78FE
+</span>
+<span class="comment">--[[ for strings or buffers there is copy ]]</span>
+
+buf:copy(<span class="string">"putme"</span>)
+buf:copy(<span class="string">"notlong"</span>,<span class="number">3</span>)
+
+<span class="global">print</span>(buf:dump())
+<span class="comment">-- [0000]   78 FE 70 75  74 6D 65 6E  6F 74                      x.pu tmen ot
+</span>
+buf:clear()
+
+<span class="comment">--[[ For manual operation there is :alloc ]]</span>
+<span class="keyword">local</span> nbytes = <span class="number">5</span>
+<span class="keyword">local</span> p = buf:alloc(nbytes)
+ffi.copy(p,<span class="string">"12345"</span>,<span class="number">5</span>)
+<span class="global">print</span>(buf)
+<span class="global">print</span>(buf:dump())
+<span class="comment">-- binbuf&lt;0x3a801400&gt;[5/4096]
+</span><span class="comment">-- [0000]   31 32 33 34  35                                      1234 5
+</span>
+<span class="comment">--[[ If you need raw char data fro buffer, call :pv() ]]</span>
+
+<span class="keyword">local</span> ptr,len = buf:pv()
+<span class="keyword">local</span> str = ffi.<span class="global">string</span>(ptr,len)
+
+<span class="comment">---
+</span><span class="comment">--- Inside object real buffer is allocated internally and will be freed with buf destroy
+</span><span class="comment">--- If you need to use buffer (for ex for iovec), you must keep reference to buf
+</span><span class="comment">--- But since buf is not a pointer to the beginning of char data there is an :export method.
+</span><span class="comment">--- It allows to take out character data itself with correct gc-guarded poiner
+</span><span class="comment">---
+</span>
+<span class="keyword">local</span> pv
+<span class="keyword">do</span>
+    <span class="keyword">local</span> buf = bin.buf(<span class="number">4096</span>)
+    buf:copy(<span class="string">"test"</span>)
+    <span class="keyword">local</span> len
+    pv,len = buf:export()
+    <span class="comment">-- now buffer can't be used anymore for writing data
+</span><span class="keyword">end</span>
+<span class="global">collectgarbage</span>()
+<span class="comment">-- but pv still points to original data and memory will be freed only when pv will be freed
+</span>pv = <span class="keyword">nil</span>
+<span class="global">collectgarbage</span>()
+<span class="comment">-- now memory was freed. no one should use data under buf or pv
+</span>
+<span class="comment">--[[
+bin.buf requires 2 allocations: for struct and for buffer, but allows reallocation, when needed. If the amount of data required is known, bin.fixbuf may be used as a drop-in replacement. It uses only one malloc, but can't be extended over it's size (error will be thrown)
+]]</span>
+
+<span class="comment">---
+</span><span class="comment">--- There is also read buffer, for reading data, but I will document it
+</span><span class="comment">--- a bit later ;)
+</span><span class="comment">---</span>
+</pre>
+
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-21 21:50:53 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

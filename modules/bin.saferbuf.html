@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Bin</title>
+    <link rel="stylesheet" href="../ldoc_pale.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bin</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Class_saferbuf">Class saferbuf </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/bin.base.html">bin.base</a></li>
+  <li><a href="../modules/bin.buf.html">bin.buf</a></li>
+  <li><a href="../modules/bin.fixbuf.html">bin.fixbuf</a></li>
+  <li><a href="../modules/bin.rbuf.html">bin.rbuf</a></li>
+  <li><strong>bin.saferbuf</strong></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/bin.basebuf.html">bin.basebuf</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>bin.saferbuf</code></h1>
+<p>Implements Safe binary Reader.</p>
+<p> Example of usage <a href="https://github.com/ochaton/migrate/blob/29663cf96b0103963a1f78dbbbc91df9bf1fec98/migrate/init.lua#L31">ochaton/migrate</a></p>
+
+<p> Same as <a href="../modules/bin.rbuf.html#">bin.rbuf</a> but safer.
+ Always checks bounds of the buffer.</p>
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="../modules/bin.rbuf.html#rbuf:dump">bin.rbuf.dump</a></li>
+         <li><a href="../modules/bin.rbuf.html#rbuf:hex">bin.rbuf.hex</a></li>
+         <li><a href="../modules/bin.rbuf.html#rbuf:move">bin.rbuf.move</a></li>
+         <li><a href="../modules/bin.rbuf.html#rbuf:avail">bin.rbuf.avail</a></li>
+    </ul>
+
+
+<h2><a href="#Class_saferbuf">Class saferbuf </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#srbuf:ber">srbuf:ber()</a></td>
+	<td class="summary">Decodes VLQ number Opposite to <a href="../classes/bin.basebuf.html#buf:ber">bin.basebuf.ber</a> (LuaJIT >= 2.1).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#srbuf:str">srbuf:str(len)</a></td>
+	<td class="summary">Reads <code>len</code> bytes from buffer and returns <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#srbuf:skip">srbuf:skip(len)</a></td>
+	<td class="summary">Forwards cursor for <code>len</code> bytes (bounds checks inside)</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#srbuf:have">srbuf:have([bytes=0[, lvl=2]])</a></td>
+	<td class="summary">Checks that buffer has at least <code>bytes</code> till the end</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#saferbuf.new">saferbuf.new(ptr[, size=#str])</a></td>
+	<td class="summary">Creates reader from given pointer</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Class_saferbuf"></a>Class saferbuf </h2>
+
+          <div class="section-description">
+
+<p>Safe rbuf implements everything <a href="../modules/bin.rbuf.html#">bin.rbuf</a> does but adds bounds checks.
+ Has following structure.</p>
+
+<pre><code>struct bin_safe_rbuf {
+    const char * buf;
+    union {
+        const char     *c;
+        const int8_t   *i8;
+        const uint8_t  *u8;
+        const int16_t  *i16;
+        const uint16_t *u16;
+        const int32_t  *i32;
+        const uint32_t *u32;
+        const int64_t  *i64;
+        const uint64_t *u64;
+    } p;
+    size_t len;
+};
+</code></pre>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "srbuf:ber"></a>
+    <strong>srbuf:ber()</strong>
+    </dt>
+    <dd>
+    Decodes VLQ number Opposite to <a href="../classes/bin.basebuf.html#buf:ber">bin.basebuf.ber</a> (LuaJIT >= 2.1).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>number</code> decoded value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "srbuf:str"></a>
+    <strong>srbuf:str(len)</strong>
+    </dt>
+    <dd>
+    Reads <code>len</code> bytes from buffer and returns <a href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">len</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "srbuf:skip"></a>
+    <strong>srbuf:skip(len)</strong>
+    </dt>
+    <dd>
+    Forwards cursor for <code>len</code> bytes (bounds checks inside)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">len</span>
+            <span class="types"><span class="type">number</span></span>
+         number of bytes
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "srbuf:have"></a>
+    <strong>srbuf:have([bytes=0[, lvl=2]])</strong>
+    </dt>
+    <dd>
+    Checks that buffer has at least <code>bytes</code> till the end
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">bytes</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+         (<em>default</em> 0)
+        </li>
+        <li><span class="parameter">lvl</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+         (<em>default</em> 2)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        bytes to the end of the buffer
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "saferbuf.new"></a>
+    <strong>saferbuf.new(ptr[, size=#str])</strong>
+    </dt>
+    <dd>
+    Creates reader from given pointer
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ptr</span>
+            <span class="types"><span class="type">`char</span></span>
+         string or pointer
+        </li>
+        <li><span class="parameter">size</span>
+            <span class="types"><span class="type">number</span></span>
+         of the buffer
+         (<em>default</em> #str)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/bin.saferbuf.html">saferbuf</a>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-21 21:50:53 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

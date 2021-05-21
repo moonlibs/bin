@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Bin</title>
+    <link rel="stylesheet" href="../ldoc_pale.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bin</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>bin.base</strong></li>
+  <li><a href="../modules/bin.buf.html">bin.buf</a></li>
+  <li><a href="../modules/bin.fixbuf.html">bin.fixbuf</a></li>
+  <li><a href="../modules/bin.rbuf.html">bin.rbuf</a></li>
+  <li><a href="../modules/bin.saferbuf.html">bin.saferbuf</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/bin.basebuf.html">bin.basebuf</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>bin.base</code></h1>
+<p>This module contains basic binary functions.</p>
+<p>
+
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Release</strong>: v4</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#htobe16">htobe16(x)</a></td>
+	<td class="summary">Converts host byte order to big endian 16 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#htole16">htole16(x)</a></td>
+	<td class="summary">Converts host byte order to little endian 16 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#be16toh">be16toh(x)</a></td>
+	<td class="summary">Converts big endian 16 bits to host byte order.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#le16toh">le16toh(x)</a></td>
+	<td class="summary">Converts little endian 16 bits to host byte</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#htobe32">htobe32(x)</a></td>
+	<td class="summary">Converts host byte order to big endian 32 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#htole32">htole32(x)</a></td>
+	<td class="summary">Converts host byte order to little endian 32 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#be32toh">be32toh(x)</a></td>
+	<td class="summary">Converts big endian 32 bits to host byte order.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#le32toh">le32toh(x)</a></td>
+	<td class="summary">Converts little endian 32 bits to host byte</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#htobe64">htobe64(x)</a></td>
+	<td class="summary">Converts host byte order to big endian 64 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#htole64">htole64(x)</a></td>
+	<td class="summary">Converts host byte order to little endian 64 bits.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#be64toh">be64toh(x)</a></td>
+	<td class="summary">Converts big endian 64 bits to host byte order.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#le64toh">le64toh(x)</a></td>
+	<td class="summary">Converts little endian 64 bits to host byte</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#hex">hex(data, len)</a></td>
+	<td class="summary">Returns hex representation of the binary data</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#xd">xd(data, len)</a></td>
+	<td class="summary">Returns hexdump (hexdump -C) of the binary data</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "htobe16"></a>
+    <strong>htobe16(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to big endian 16 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "htole16"></a>
+    <strong>htole16(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to little endian 16 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "be16toh"></a>
+    <strong>be16toh(x)</strong>
+    </dt>
+    <dd>
+    Converts big endian 16 bits to host byte order.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "le16toh"></a>
+    <strong>le16toh(x)</strong>
+    </dt>
+    <dd>
+    Converts little endian 16 bits to host byte
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "htobe32"></a>
+    <strong>htobe32(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to big endian 32 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "htole32"></a>
+    <strong>htole32(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to little endian 32 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "be32toh"></a>
+    <strong>be32toh(x)</strong>
+    </dt>
+    <dd>
+    Converts big endian 32 bits to host byte order.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "le32toh"></a>
+    <strong>le32toh(x)</strong>
+    </dt>
+    <dd>
+    Converts little endian 32 bits to host byte
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "htobe64"></a>
+    <strong>htobe64(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to big endian 64 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "htole64"></a>
+    <strong>htole64(x)</strong>
+    </dt>
+    <dd>
+    Converts host byte order to little endian 64 bits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "be64toh"></a>
+    <strong>be64toh(x)</strong>
+    </dt>
+    <dd>
+    Converts big endian 64 bits to host byte order.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "le64toh"></a>
+    <strong>le64toh(x)</strong>
+    </dt>
+    <dd>
+    Converts little endian 64 bits to host byte
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         number
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "hex"></a>
+    <strong>hex(data, len)</strong>
+    </dt>
+    <dd>
+    Returns hex representation of the binary data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         accepts string, allmost any pointer - start of the data.
+        </li>
+        <li><span class="parameter">len</span>
+         length of the data in bytes
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        <a href="../modules/bin.base.html#hex">hex</a> representation of the data
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">print</span>(bin.hex <span class="string">"some binary string"</span>)
+<span class="number">736</span>F6D652062696E61727920737472696E67</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "xd"></a>
+    <strong>xd(data, len)</strong>
+    </dt>
+    <dd>
+    Returns hexdump (hexdump -C) of the binary data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+         accepts string, allmost any pointer - start of the data.
+        </li>
+        <li><span class="parameter">len</span>
+         length of the data in bytes
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        <code>hexdump</code> representation of the data
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">print</span>(bin.xd <span class="string">"some binary string"</span>)
+[<span class="number">0000</span>]   <span class="number">73</span> <span class="number">6</span>F <span class="number">6</span>D <span class="number">65</span>  <span class="number">20</span> <span class="number">62</span> <span class="number">69</span> <span class="number">6</span>E  <span class="number">61</span> <span class="number">72</span> <span class="number">79</span> <span class="number">20</span>  <span class="number">73</span> <span class="number">74</span> <span class="number">72</span> <span class="number">69</span>   some  bin ary  stri
+[<span class="number">0010</span>]   <span class="number">6</span>E <span class="number">67</span>                                                ng</pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-21 21:50:53 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
