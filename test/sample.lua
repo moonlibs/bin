@@ -17,6 +17,8 @@ local function dump(x)
 	return j.encode(x)
 end
 
+package.path = "./?.lua;"..package.path
+print(package.searchpath('bin', package.path))
 
 local bin = require 'bin'
 

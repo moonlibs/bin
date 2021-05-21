@@ -1,3 +1,10 @@
+---
+-- This module implements common write buffer operations.
+--
+-- basebuf supports `{u,}int{8,16,32,64}{be,le,}` methods.
+--
+-- All of them accepts single argument n and pushes it with corresponding casting
+-- @classmod bin.basebuf
 local buf = {}
 
 local base = require 'bin.base'
@@ -50,15 +57,24 @@ local double_t  = ffi.typeof('double *')
 local float_t   = ffi.typeof('float *')
 local uint8_t   = ffi.typeof('uint8_t *')
 
+---
+-- Pushes `n` as double (8 bytes) into buffer
+-- @param n number
 function buf:double(n)
 	local p = self:alloc(8)
 	ffi.cast(double_t, p)[0] = n
 end
+---
+-- Pushes `n` as double (8 bytes) casting to LE into buffer
+-- @param n number
 function buf:doublele(n)
 	local p = ffi.cast('double_union *', self:alloc(8))
 	p[0].d = n
 	p[0].u = C.bin_htole64(p[0].u)
 end
+---
+-- Pushes `n` as double (8 bytes) casting to BE into buffer
+-- @param n number
 function buf:doublebe(n)
 	local p = ffi.cast('double_union *', self:alloc(8))
 	p[0].d = n
@@ -66,15 +82,24 @@ function buf:doublebe(n)
 end
 buf.d = buf.double;
 
+---
+-- Pushes `n` as float (4 bytes) into buffer
+-- @number n
 function buf:float(n)
 	local p = self:alloc(4)
 	ffi.cast(float_t, p)[0] = n
 end
+---
+-- Pushes `n` as float (4 bytes) casting to LE into buffer
+-- @number n
 function buf:floatle(n)
 	local p = ffi.cast('float_union *', self:alloc(4))
 	p[0].d = n
 	p[0].u = C.bin_htole32(p[0].u)
 end
+---
+-- Pushes `n` as float (4 bytes) casting to BE into buffer
+-- @number n
 function buf:floatbe(n)
 	local p = ffi.cast('float_union *', self:alloc(4))
 	p[0].d = n
@@ -100,7 +125,13 @@ function buf.reb (self, n)
 	end
 end
 
-if require 'jit'.version_num >= 20100 then
+---
+-- Pushes number performing variable length encoding
+--
+--	[wikipedia](https://en.wikipedia.org/wiki/Variable-length_quantity#General_structure)
+-- @function buf:ber
+-- @param n number
+if base.jit_major >= 20100 then
 	local func = [[
 		local ffi = require 'ffi'
 		local uint8_t  = ffi.typeof('uint8_t *')
@@ -127,6 +158,9 @@ if require 'jit'.version_num >= 20100 then
 	buf.ber = _G.dostring(func)
 end
 
+---
+-- Pushes first byte of the string
+-- @string x
 function buf:char(x)
 	local p = self:alloc(1)
 	if type(x) == 'string' then
@@ -137,6 +171,14 @@ function buf:char(x)
 	end
 end
 
+---
+-- Control methods
+-- @section controls
+
+---
+-- Copies data from given string or pointer
+-- @param src string or pointer
+-- @param[opt=#src] len bytes of src to copy
 function buf:copy(data,len)
 	if not len then len = #data end
 
@@ -144,23 +186,37 @@ function buf:copy(data,len)
 	ffi.copy(p,ffi.cast('char *',data),len)
 end
 
+---
+-- Rollbacks cursor to given position
+-- @number[opt=0] n
 function buf:clear(n)
 	n = n or 0
 	assert(n <= self.cur, "position must be less than current length")
 	self.cur = n
 end
 
+---
+-- Returns hexdump of the buffer
+-- @see bin.base.xd
+-- @treturn string hexdump
 function buf:dump()
 	local p,len = self:pv()
 	return base.xd(p,len,nil)
 end
 buf.xd = buf.dump
 
+---
+-- Returns hex representation (analog of string.tohex)
+-- @see bin.base.hex
+-- @treturn string hex
 function buf:hex()
 	local p,len = self:pv()
 	return base.hex(p,len)
 end
 
+---
+-- Creates new unsafe `bin.rbuf` from the buffer
+-- @treturn @{bin.rbuf} rbuf
 function buf:reader()
 	local p,l = self:pv()
 	return rbuf.new(p, l)
