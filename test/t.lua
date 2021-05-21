@@ -1,11 +1,13 @@
 --[[
 You can run this tests using typing this in the shell:
 # LuaJIT (tested on 2.0.5)
-LUA_CPATH="./?.so" LUA_PATH="./?.lua;/home/ochaton/.luarocks/share/lua/5.1/?.lua" luajit t.lua
-	# Tarantool (tested on 1.10.2-26-gb2ddd18)
-LUA_CPATH="./?.so" LUA_PATH="./?.lua;/home/ochaton/.luarocks/share/lua/5.1/?.lua" tarantool t.lua
+luajit test/t.lua
+
+# Tarantool (tested on 1.10.2-26-gb2ddd18)
+tarantool test/t.lua
 ]]
 
+package.path = "./?.lua;"..package.path
 print(package.searchpath('bin', package.path))
 -- TODO: import tap based tests
 local bin = require 'bin'

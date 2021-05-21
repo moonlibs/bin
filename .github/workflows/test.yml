@@ -1,0 +1,47 @@
+name: test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  linter:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@master
+      - uses: leafo/gh-actions-lua@v8.0.0
+        with:
+          luaVersion: luajit-openresty
+
+      - uses: leafo/gh-actions-luarocks@v4.0.0
+      - name: install and run luacheck
+        run: |
+          luarocks install luacheck && luacheck .
+
+  test:
+    strategy:
+      matrix:
+        luaVersion: ["luajit-2.0.5", "luajit-2.1.0-beta3", "luajit-openresty"]
+        machineTag: ["ubuntu-latest", "macos-latest"]
+
+    runs-on: ${{ matrix.machineTag }}
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: leafo/gh-actions-lua@v8.0.0
+      with:
+        luaVersion: ${{ matrix.luaVersion }}
+
+    - uses: leafo/gh-actions-luarocks@v4.0.0
+
+    - name: build and fetch dependencies
+      run: |
+        luarocks --server https://moonlibs.github.io/rocks/ make rockspecs/bin-scm-4.rockspec
+
+    - name: test-scribe
+      run: |
+        lua test/scribe.lua
+
+    - name: test-reb
+      run: |
+        lua test/t.lua

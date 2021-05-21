@@ -1,3 +1,6 @@
+package.path = "./?.lua;"..package.path
+print(package.searchpath('bin', package.path))
+
 local bin = require 'bin'
 local ffi = require 'ffi'
 
@@ -121,7 +124,7 @@ function send(...)
 		sz = sz+1
 	end
 	sz = sz+1
-	
+
 	local buf = bin.fixbuf(sz)
 	local hdr = ffi.cast( 'sc_hdr_t *', buf:alloc(HDR_SZ) )
 	ffi.copy(hdr,def_hdr,HDR_SZ)
