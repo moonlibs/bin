@@ -2,7 +2,7 @@ package = 'bin'
 version = 'scm-1'
 
 source  = {
-    url    = 'git://github.com/moonlibs/bin.git';
+    url    = 'git+https://github.com/moonlibs/bin.git';
     branch = 'v1';
 }
 
