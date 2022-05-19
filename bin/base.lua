@@ -5,7 +5,16 @@
 local M = { V = 4 }
 
 local ffi = require 'ffi.reloadable'
-local lib = ffi.load(package.searchpath('libluabin-scm-'..M.V, package.cpath), true)
+local so_lib_path do
+	local so_lib_name = 'libluabin-scm-'..M.V
+	if package.search then
+		so_lib_path = package.search(so_lib_name)
+	else
+		so_lib_path = package.searchpath(so_lib_name, package.cpath)
+	end
+	assert(so_lib_path, "bin: failed to find "..so_lib_name)
+end
+local lib = ffi.load(so_lib_path, true)
 
 ffi.fundef('calloc',  [[ void *calloc(size_t count, size_t size); ]])
 ffi.fundef('malloc',  [[ void * malloc(size_t size); ]])
